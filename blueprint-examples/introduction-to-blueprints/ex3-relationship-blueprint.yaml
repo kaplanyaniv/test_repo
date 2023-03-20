@@ -7,7 +7,6 @@ description: >
   See the app_scripts/create.sh to see how this is done.
   The webserver and application will run on the <manager host>:8000
 
-
 imports:
   - https://cloudify.co/spec/cloudify/6.3.0/types.yaml
 
@@ -19,8 +18,7 @@ inputs:
 
   app_git:
     description: A url of a web based javascript application
-    default:  https://github.com/zxcodes/Calculator
-
+    default: https: //github.com/zxcodes/Calculator
 
 node_templates:
 
@@ -42,7 +40,7 @@ node_templates:
   # The cloudify.relationships.contained_in will tell Cloudify to run the lifecycle operation of this node type on the same host that was created by the http_web_server node above
   # This also means that this web_app node will run only after the http_web_server has been deployed successfully
   web_app:
-    type:  cloudify.nodes.ApplicationModule
+    type: cloudify.nodes.ApplicationModule
     relationships:
       - type: cloudify.relationships.contained_in
         target: http_web_server
@@ -60,18 +58,15 @@ node_templates:
           inputs:
             app_path: {get_attribute: [http_web_server, path] }
 
-
-
 capabilities:
 
   local_url:
     description: local endpoint of the application.
-    value: { concat: [ 'http://localhost:' , { get_input: webserver_port } ]  }
+    value: { concat: [ 'http://localhost:' , { get_input: webserver_port } ] }
 
   remote_url:
     description: The external endpoint of the application.
-    value: { concat: [ 'Since this is an example, copy the manager ip/dns and append the following port ' , { get_input: webserver_port } ]  }
-
+    value: { concat: [ 'Since this is an example, copy the manager ip/dns and append the following port ' , { get_input: webserver_port } ] }
 
   web_server_pid:
     description: The external endpoint of the application.

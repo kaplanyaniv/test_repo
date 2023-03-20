@@ -63,8 +63,8 @@ node_templates:
       ssl: true
       verify: false
       record:
-         ipv4addr: 10.10.1.1
-         name: { get_input: record_host_name }
+        ipv4addr: 10.10.1.1
+        name: { get_input: record_host_name }
     relationships:
       - type: cloudify.relationships.depends_on
         target: network_ids_record
@@ -91,8 +91,8 @@ node_templates:
       ssl: true
       verify: false
       record:
-         ipv4addr:
-            concat:
+        ipv4addr:
+           concat:
               - "func:nextavailableip:"
               - { get_input: record_network_addrs }
          name: { get_input: record_host_name }
@@ -108,8 +108,8 @@ node_templates:
       ssl: true
       verify: false
       record:
-         ipv4addr: 10.10.1.2
-         name: { get_input: record_host_name }
+        ipv4addr: 10.10.1.2
+        name: { get_input: record_host_name }
     relationships:
       - type: cloudify.relationships.depends_on
         target: host_record
@@ -122,8 +122,8 @@ node_templates:
       ssl: true
       verify: false
       record:
-         ipv4addr: 10.10.1.2
-         name: { get_input: record_host_name }
+        ipv4addr: 10.10.1.2
+        name: { get_input: record_host_name }
     relationships:
       - type: cloudify.relationships.depends_on
         target: update_host
