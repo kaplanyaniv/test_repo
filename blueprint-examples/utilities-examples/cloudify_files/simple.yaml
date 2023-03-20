@@ -7,6 +7,7 @@ imports:
 inputs:
 
   file_path:
+    display_label: File Path
     description: Path to save the file.
     type: string
 
@@ -20,4 +21,4 @@ node_templates:
         file_path: { get_input: file_path }
         owner: cfyuser:cfyuser
         mode: 777
-        
+

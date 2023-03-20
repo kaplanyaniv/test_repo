@@ -80,7 +80,6 @@ node_templates:
         deployment:
           id: { get_input: network_prov_name }
 
-
   ### PROVISIONING ###
 
   # F5 Provisioning:

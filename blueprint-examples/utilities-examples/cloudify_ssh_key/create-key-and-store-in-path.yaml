@@ -16,7 +16,7 @@ inputs:
     default: false
 
   openssh_format:
-    default: True
+    default: true
 
 dsl_definitions:
   resource_config: &RESOURCE_CONFIG

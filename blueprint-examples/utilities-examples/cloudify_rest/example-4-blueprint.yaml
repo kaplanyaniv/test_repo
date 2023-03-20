@@ -10,6 +10,7 @@ inputs:
     default: api.github.com
 
   commit:
+    display_label: Commit
     type: string
 
 node_templates:

@@ -8,6 +8,7 @@ imports:
 inputs:
 
   retry_after:
+    display_label: Retry After
     type: integer
     default: 5
 
@@ -20,48 +21,56 @@ inputs:
     default: { get_secret: resource_suffix }
 
   azure_network_deployment_name:
+    display_label: Azure Network Deployment Name
     type: string
     default: VNFM-Networking-Prov-Azure-networks
 
   vm_size:
+    display_label: Vm Size
     type: string
     required: true
     default: Standard_B2s
 
   vm_os_family:
+    display_label: Vm Os Family
     type: string
     required: true
     default: linux
 
   vm_image_publisher:
+    display_label: Vm Image Publisher
     type: string
     required: true
     default: fortinet
 
   vm_image_offer:
+    display_label: Vm Image Offer
     type: string
     required: true
     default: fortinet_fortigate-vm_v5
 
   vm_image_sku:
+    display_label: Vm Image Sku
     type: string
     required: true
-    default:  fortinet_fg-vm
+    default: fortinet_fg-vm
 
   vm_image_version:
+    display_label: Vm Image Version
     type: string
     required: true
     default: 6.0.7
 
   vnf_vm_name:
+    display_label: Vnf Vm Name
     type: string
     default: fortigate
 
   fortigate_license_filename:
+    display_label: Fortigate License Filename
     type: string
     description: Name of the Fortigate license file (It will be uploaded to Fortigate VM with this name). It should have .lic file extension.
     default: FGVM02TM19000054.lic
-
 
 dsl_definitions:
   azure_config: &azure_config
@@ -73,14 +82,14 @@ dsl_definitions:
 node_templates:
 
   resource_group:
-    type: cloudify.azure.nodes.ResourceGroup
+    type: cloudify.nodes.azure.ResourceGroup
     properties:
       azure_config: *azure_config
       name: { get_capability: [ { get_input: azure_network_deployment_name }, resource_group ] }
       use_external_resource: true
 
   storage_account:
-    type: cloudify.azure.nodes.storage.StorageAccount
+    type: cloudify.nodes.azure.storage.StorageAccount
     properties:
       azure_config: *azure_config
       name: { concat: [ { get_input: resource_prefix }, 'storageaccount', { get_input: resource_suffix } ] }
@@ -89,61 +98,61 @@ node_templates:
       resource_config:
         accountType: Standard_LRS
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
 
   virtual_network:
-    type: cloudify.azure.nodes.network.VirtualNetwork
+    type: cloudify.nodes.azure.network.VirtualNetwork
     properties:
       azure_config: *azure_config
       use_external_resource: true
       name: { get_capability: [ { get_input: azure_network_deployment_name }, virtual_network] }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
 
   mgmt_subnet:
-    type: cloudify.azure.nodes.network.Subnet
+    type: cloudify.nodes.azure.network.Subnet
     properties:
       azure_config: *azure_config
       use_external_resource: true
       name: { get_capability: [ { get_input: azure_network_deployment_name }, mgmt_subnet] }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_virtual_network
+      - type: cloudify.relationships.azure.contained_in_virtual_network
         target: virtual_network
 
   wan_subnet:
-    type: cloudify.azure.nodes.network.Subnet
+    type: cloudify.nodes.azure.network.Subnet
     properties:
       azure_config: *azure_config
       use_external_resource: true
       name: { get_capability: [ { get_input: azure_network_deployment_name }, wan_subnet] }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_virtual_network
+      - type: cloudify.relationships.azure.contained_in_virtual_network
         target: virtual_network
 
   lan_subnet:
-    type: cloudify.azure.nodes.network.Subnet
+    type: cloudify.nodes.azure.network.Subnet
     properties:
       azure_config: *azure_config
       use_external_resource: true
       name: { get_capability: [ { get_input: azure_network_deployment_name }, lan_subnet] }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_virtual_network
+      - type: cloudify.relationships.azure.contained_in_virtual_network
         target: virtual_network
 
   network_security_group:
-    type: cloudify.azure.nodes.network.NetworkSecurityGroup
+    type: cloudify.nodes.azure.network.NetworkSecurityGroup
     properties:
       azure_config: *azure_config
       use_external_resource: true
       name: { get_capability: [ { get_input: azure_network_deployment_name }, network_security_group] }
     relationships:
-    - type: cloudify.azure.relationships.contained_in_resource_group
-      target: resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
+        target: resource_group
 
   mgmt_nic_ip_cfg:
-    type: cloudify.azure.nodes.network.IPConfiguration
+    type: cloudify.nodes.azure.network.IPConfiguration
     properties:
       azure_config: *azure_config
       name: { concat: [ { get_input: resource_prefix }, 'fg_mgmt_ic', { get_input: resource_suffix } ] }
@@ -152,17 +161,17 @@ node_templates:
       resource_config:
         privateIPAllocationMethod: Dynamic
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
-      - type: cloudify.azure.relationships.ip_configuration_connected_to_subnet
+      - type: cloudify.relationships.azure.ip_configuration_connected_to_subnet
         target: mgmt_subnet
-      - type: cloudify.azure.relationships.ip_configuration_connected_to_public_ip
+      - type: cloudify.relationships.azure.ip_configuration_connected_to_public_ip
         target: mgmt_public_ip_address
 
   mgmt_public_ip_address:
-    type: cloudify.azure.nodes.network.PublicIPAddress
+    type: cloudify.nodes.azure.network.PublicIPAddress
     properties:
-      azure_config:  *azure_config
+      azure_config: *azure_config
       use_external_resource: false
       name: { concat: [ { get_input: resource_prefix }, 'fg_mgmt_ia', { get_input: resource_suffix } ] }
       location: { get_secret: azure_location }
@@ -170,11 +179,11 @@ node_templates:
       resource_config:
         publicIPAllocationMethod: Static
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
 
   mgmt_nic:
-    type: cloudify.azure.nodes.network.NetworkInterfaceCard
+    type: cloudify.nodes.azure.network.NetworkInterfaceCard
     properties:
       azure_config: *azure_config
       location: { get_secret: azure_location }
@@ -182,15 +191,15 @@ node_templates:
       retry_after: { get_input: retry_after }
       primary: true
     relationships:
-      - type: cloudify.azure.relationships.nic_connected_to_ip_configuration
+      - type: cloudify.relationships.azure.nic_connected_to_ip_configuration
         target: mgmt_nic_ip_cfg
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
       - type: cloudify.azure.relationships.nic_connected_to_network_security_group
         target: network_security_group
 
   wan_nic_ip_cfg:
-    type: cloudify.azure.nodes.network.IPConfiguration
+    type: cloudify.nodes.azure.network.IPConfiguration
     properties:
       azure_config: *azure_config
       location: { get_secret: azure_location }
@@ -199,13 +208,13 @@ node_templates:
       resource_config:
         privateIPAllocationMethod: Dynamic
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
-      - type: cloudify.azure.relationships.ip_configuration_connected_to_subnet
+      - type: cloudify.relationships.azure.ip_configuration_connected_to_subnet
         target: wan_subnet
 
   wan_nic:
-    type: cloudify.azure.nodes.network.NetworkInterfaceCard
+    type: cloudify.nodes.azure.network.NetworkInterfaceCard
     properties:
       azure_config: *azure_config
       location: { get_secret: azure_location }
@@ -213,15 +222,15 @@ node_templates:
       retry_after: { get_input: retry_after }
       primary: false
     relationships:
-      - type: cloudify.azure.relationships.nic_connected_to_ip_configuration
+      - type: cloudify.relationships.azure.nic_connected_to_ip_configuration
         target: wan_nic_ip_cfg
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
       - type: cloudify.azure.relationships.nic_connected_to_network_security_group
         target: network_security_group
 
   lan_nic_ip_cfg:
-    type: cloudify.azure.nodes.network.IPConfiguration
+    type: cloudify.nodes.azure.network.IPConfiguration
     properties:
       azure_config: *azure_config
       location: { get_secret: azure_location }
@@ -230,13 +239,13 @@ node_templates:
       resource_config:
         privateIPAllocationMethod: Dynamic
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
-      - type: cloudify.azure.relationships.ip_configuration_connected_to_subnet
+      - type: cloudify.relationships.azure.ip_configuration_connected_to_subnet
         target: lan_subnet
 
   lan_nic:
-    type: cloudify.azure.nodes.network.NetworkInterfaceCard
+    type: cloudify.nodes.azure.network.NetworkInterfaceCard
     properties:
       azure_config: *azure_config
       location: { get_secret: azure_location }
@@ -244,9 +253,9 @@ node_templates:
       retry_after: { get_input: retry_after }
       primary: false
     relationships:
-      - type: cloudify.azure.relationships.nic_connected_to_ip_configuration
+      - type: cloudify.relationships.azure.nic_connected_to_ip_configuration
         target: lan_nic_ip_cfg
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
       - type: cloudify.azure.relationships.nic_connected_to_network_security_group
         target: network_security_group
@@ -263,7 +272,7 @@ node_templates:
             content: { get_secret: fortigate_license }
 
   vnf_vm:
-    type: cloudify.azure.nodes.compute.VirtualMachine
+    type: cloudify.nodes.azure.compute.VirtualMachine
     properties:
       agent_config:
         install_method: none
@@ -291,15 +300,15 @@ node_templates:
           adminUsername: { get_secret: fortigate_username }
           adminPassword: { get_secret: fortigate_password }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
-      - type: cloudify.azure.relationships.connected_to_storage_account
+      - type: cloudify.relationships.azure.connected_to_storage_account
         target: storage_account
-      - type: cloudify.azure.relationships.connected_to_nic
+      - type: cloudify.relationships.azure.connected_to_nic
         target: mgmt_nic
-      - type: cloudify.azure.relationships.connected_to_nic
+      - type: cloudify.relationships.azure.connected_to_nic
         target: wan_nic
-      - type: cloudify.azure.relationships.connected_to_nic
+      - type: cloudify.relationships.azure.connected_to_nic
         target: lan_nic
       - type: cloudify.relationships.depends_on
         target: cloud_config

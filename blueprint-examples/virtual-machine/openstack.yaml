@@ -8,35 +8,42 @@ imports:
 inputs:
 
   external_network_id:
+    display_label: External Network Id
     type: string
     description: A network that provisions floating IPs.
     default: { get_secret: openstack_external_network }
 
   image:
+    display_label: Image
     type: string
     description: centos UUID image.
     default: { get_secret: base_image_id }
 
   flavor:
+    display_label: Flavor
     type: string
     description: The UUID of small flavor in your Openstack account.
     default: { get_secret: base_flavor_id }
 
   env_name:
+    display_label: Env Name
     type: string
     description: Control parameters for names in resources.
     default: '4'
 
   resource_suffix:
+    display_label: Resource Suffix
     type: string
     default: { get_input: env_name }
 
   network_id:
+    display_label: Network Id
     type: string
     description: A name for your new Openstack Network.
     default: { concat: [ cloudify-demo-network-, { get_input: resource_suffix } ] }
 
   subnet_id:
+    display_label: Subnet Id
     type: string
     description: A name for your new Openstack Subnet.
     default: { concat: [ cloudify-demo-subnet-, { get_input: resource_suffix } ] }
@@ -47,28 +54,32 @@ inputs:
     default: centos
 
   agent_key_name:
+    display_label: Agent Key Name
     type: string
     default: agent_key
 
   cidr:
 #    type: string
 #    default: { get_input: resource_suffix }
-     default: 0
+    default: 0
 
   user_domain_name:
+    display_label: User Domain Name
     description: Openstack user domain name.
     type: string
-    default:  { get_secret: openstack_user_domain_name }
+    default: { get_secret: openstack_user_domain_name }
 
   project_domain_name:
+    display_label: Project Domain Name
     description: The name of your OpenStack project.
     type: string
-    default:  { get_secret: openstack_project_domain_name }
+    default: { get_secret: openstack_project_domain_name }
 
   encode_cloud_init:
     default: false
 
   server_name:
+    display_label: Server Name
     type: string
     default: { concat: [ cloudify-demo-server-, { get_input: resource_suffix } ] }
 
@@ -138,8 +149,8 @@ node_templates:
         cidr: { concat: [ "10.10.", { get_input: cidr }, ".0/24" ] }
         dns_nameservers: [8.8.4.4, 8.8.8.8]
         allocation_pools:
-        - start:  { concat: [ "10.10.", { get_input: cidr }, ".2" ] }
-          end:  { concat: [ "10.10.", { get_input: cidr }, ".254" ] }
+          - start: { concat: [ "10.10.", { get_input: cidr }, ".2" ] }
+            end: { concat: [ "10.10.", { get_input: cidr }, ".254" ] }
     relationships:
       - type: cloudify.relationships.contained_in
         target: network
@@ -223,11 +234,11 @@ node_templates:
       encode_base64: { get_input: encode_cloud_init }
       resource_config:
         users:
-        - name: { get_input: agent_user }
-          shell: /bin/bash
-          sudo: ['ALL=(ALL) NOPASSWD:ALL']
-          ssh-authorized-keys:
-          - { get_attribute: [agent_key, public_key_export] }
+          - name: { get_input: agent_user }
+            shell: /bin/bash
+            sudo: ['ALL=(ALL) NOPASSWD:ALL']
+            ssh-authorized-keys:
+              - { get_attribute: [agent_key, public_key_export] }
     relationships:
       - type: cloudify.relationships.depends_on
         target: agent_key

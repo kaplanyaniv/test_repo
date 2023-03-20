@@ -10,6 +10,7 @@ imports:
 inputs:
 
   fortigate_vm_deployment_name:
+    display_label: Fortigate Vm Deployment Name
     description: Name of Fortigate Provisioning deployment
     type: string
     default: VNFM-Fortigate-Prov-Openstack-vm
@@ -48,7 +49,6 @@ node_templates:
     relationships:
       - type: cloudify.relationships.depends_on
         target: fortigate_vm_deployment
-
 
 capabilities:
   mgmt_public_ip:

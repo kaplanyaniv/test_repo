@@ -7,22 +7,27 @@ imports:
 inputs:
 
   aws-access-key-id-secret:
+    display_label: Aws-Access-Key-Id-Secret
     type: string
     default: aws_access_key_id
 
   aws-secret-access-key-secret:
+    display_label: Aws-Secret-Access-Key-Secret
     type: string
     default: aws_secret_access_key
 
   aws_region_name:
+    display_label: Aws Region Name
     type: string
     default: { get_secret: aws_region_name }
 
   resource_name:
+    display_label: Resource Name
     type: string
     default: eks_cluster
 
   env_name:
+    display_label: Env Name
     type: string
     default: { get_input: resource_name }
 
@@ -41,7 +46,7 @@ node_templates:
       client_config: *client_config
       use_external_resource: true
       resource_id: { get_input: env_name }
-      store_kube_config_in_runtime: True
+      store_kube_config_in_runtime: true
 
 capabilities:
 

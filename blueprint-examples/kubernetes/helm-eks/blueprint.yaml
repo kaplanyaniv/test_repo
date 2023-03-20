@@ -9,6 +9,7 @@ imports:
 inputs:
 
   infra_archive:
+    display_label: Infra Archive
     description: >
       URL of EKS example zip file.
     type: string
@@ -24,13 +25,16 @@ inputs:
     default: { get_input: env_name }
 
   eks_cluster_name:
+    display_label: Eks Cluster Name
     type: string
 
   env_name:
+    display_label: Env Name
     type: string
     default: { get_input: eks_cluster_name }
 
   repo_name:
+    display_label: Repo Name
     description: >
       Name of the repo to add.
     type: string
@@ -42,12 +46,14 @@ inputs:
     default: postgresql
 
   helm_installation_source:
+    display_label: Helm Installation Source
     description: >
       Helm download link.
     type: string
     default: 'https://get.helm.sh/helm-v3.3.1-linux-amd64.tar.gz'
 
   repo_url:
+    display_label: Repo Url
     description: >
       URL of the repo to add. For example:
       https://kubernetes-charts.storage.googleapis.com/
