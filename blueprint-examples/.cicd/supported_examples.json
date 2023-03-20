@@ -1,0 +1,194 @@
+{
+  "aws-example-network": ["blueprint.yaml"],
+  "azure-example-network": ["blueprint.yaml"],
+  "gcp-example-network": ["blueprint.yaml"],
+  "openstack-example-network": ["blueprint.yaml"],
+  "hello-world-example": [
+    "aws.yaml",
+    "azure.yaml",
+    "gcp.yaml",
+    "openstack.yaml",
+    "aws-cloudformation.yaml",
+    "aws-terraform.yaml",
+    "vsphere.yaml",
+    "vcloud.yaml"
+  ],
+  "simple-hello-world-example": ["blueprint.yaml"],
+  "db-lb-app/infrastructure": [
+    "aws.yaml",
+    "azure.yaml",
+    "openstack.yaml",
+    "gcp.yaml"
+  ],
+  "db-lb-app/db": [
+    "application.yaml",
+    "private-cloud-application.yaml",
+    "public-cloud-application.yaml"
+  ],
+  "db-lb-app/lb": [
+    "application.yaml",
+    "private-cloud-application.yaml",
+    "public-cloud-application.yaml"
+  ],
+  "db-lb-app/app": [
+    "application.yaml",
+    "private-cloud-application.yaml",
+    "public-cloud-application.yaml"
+  ],
+  "db-lb-app/kube_app": [
+    "application.yaml"
+  ],
+  "kubernetes/kubespray": [
+    "aws.yaml",
+    "azure.yaml",
+    "gcp.yaml",
+    "openstack.yaml",
+    "baremetal.yaml",
+    "vsphere.yaml",
+    "vcloud.yaml"
+  ],
+  "kubernetes/discovery": [
+    "aws-account.yaml",
+    "azure-account.yaml",
+    "existing-eks.yaml",
+    "existing-aks.yaml",
+    "kubernetes-workload.yaml"
+  ],
+  "kubernetes/aws-eks": ["blueprint.yaml"],
+  "kubernetes/azure-aks": ["blueprint.yaml"],
+  "kubernetes/gcp-gke": ["blueprint.yaml"],
+  "kubernetes/plugin-examples/openshift": ["blueprint.yaml"],
+  "kubernetes/plugin-examples/hello-world": ["blueprint.yaml"],
+  "kubernetes/helm-eks": ["blueprint.yaml"],
+  "prometheus": [
+    "aws.yaml",
+    "azure.yaml",
+    "openstack.yaml",
+    "gcp.yaml"
+  ],
+  "infoblox-example": ["example-infoblox-blueprint.yaml"],
+  "rest-plugin-cert": ["client-cert.yaml"],
+  "open-source-vnf/connected-host": ["openstack.yaml"],
+  "open-source-vnf/network-topology": ["openstack.yaml"],
+  "open-source-vnf/httpd": ["openstack.yaml"],
+  "open-source-vnf/haproxy": ["openstack.yaml"],
+  "open-source-vnf/pfsense": ["openstack.yaml"],
+  "open-source-vnf/service": ["openstack.yaml"],
+  "network-automation-example/bigip": [
+    "azure.yaml",
+    "azureapp.yaml"
+  ],
+  "network-automation-example/e2e": [
+    "azuree2e.yaml"
+  ],
+  "network-automation-example/fortigate": [
+    "azure.yaml",
+    "azureapp.yaml"
+  ],
+  "network-automation-example/httpd": [
+    "azure.yaml",
+    "azureapp.yaml"
+  ],
+  "network-automation-example/network-topology": [
+    "azure.yaml"
+  ],
+  "network-automation-example/service": [
+    "azure_service.yaml"
+  ],
+  "virtual-machine": [
+    "aws.yaml",
+    "aws-terraform.yaml",
+    "aws-cloudformation.yaml",
+    "azure.yaml",
+    "azure-arm.yaml",
+    "openstack.yaml",
+    "openstack-v2.yaml",
+    "gcp.yaml",
+    "ansible.yaml",
+    "vsphere.yaml",
+    "vcloud.yaml"
+  ],
+  "getting-started": [
+    "mc-jboss.yaml",
+    "mc-localstack.yaml",
+    "mc-nodejs.yaml"
+  ],
+  "docker/ansible": [
+    "ansible-container-using-docker-ansible-playbook.yaml",
+    "ansible-container.yaml"
+  ],
+  "docker/general": [
+    "any-container.yaml"
+  ],
+  "docker/installation": [
+    "install-docker.yaml"
+  ],
+  "docker/docker-machine": [
+    "mc-docker.yaml"
+  ],
+  "docker/terraform": [
+    "terraform-container-using-docker-terraform-module.yaml",
+    "terraform-container.yaml"
+  ],
+  "utilities-examples/cloudify_cloudinit": [
+    "simple.yaml",
+    "aws.yaml"
+  ],
+  "utilities-examples/cloudify_configuration": [
+    "simple.yaml"
+  ],
+  "utilities-examples/cloudify_files": [
+    "simple.yaml",
+    "openstack-blueprint.yaml"
+  ],
+  "utilities-examples/cloudify_ftp": [
+    "upload_ftp.yaml"
+  ],
+  "utilities-examples/cloudify_hooks_workflow": [
+    "check-failure.yaml"
+  ],
+  "utilities-examples/cloudify_custom_workflow": [
+    "example.yaml"
+  ],
+  "utilities-examples/cloudify_rest": [
+    "example-1-blueprint.yaml",
+    "example-2-blueprint.yaml",
+    "example-3-blueprint.yaml",
+    "example-4-blueprint.yaml",
+    "example-5-blueprint.yaml",
+    "example-6-blueprint.yaml",
+    "example-7-blueprint.yaml",
+    "example-8-blueprint.yaml",
+    "example-9-blueprint.yaml",
+    "example-github-status.yaml"
+  ],
+  "utilities-examples/cloudify_scalelist": [
+    "blueprint.yaml",
+    "tree_blueprint.yaml"
+  ],
+  "utilities-examples/cloudify_secrets": [
+    "write-secret-blueprint.yaml",
+    "read-secret-blueprint.yaml"
+  ],
+  "utilities-examples/cloudify_ssh_key": [
+    "create_secret_agent_key_using_exising_secret.yaml",
+    "create-key-and-store-in-path.yaml",
+    "create-secret-agent-key.yaml"
+  ],
+  "utilities-examples/cloudify_suspend": [
+    "example.yaml"
+  ],
+  "utilities-examples/cloudify_terminal": [
+    "linux-ssh.yaml",
+    "fortigate.yaml"
+  ],
+    "scaling-example": [
+    "ansible.yaml"
+  ],
+    "introduction-to-blueprints": [
+      "ex1-input-output-blueprint.yaml",
+      "ex2-node-type-blueprint.yaml",
+      "ex3-relationship-blueprint.yaml",
+      "ex4-nested-blueprint.yaml"
+    ]
+}
