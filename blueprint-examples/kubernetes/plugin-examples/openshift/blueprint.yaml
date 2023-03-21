@@ -1,8 +1,8 @@
 tosca_definitions_version: cloudify_dsl_1_3
 
 description: >
-  Deploys an simple, unprivileged OpenShift service. 
-  Designed for use with Red Hat's OpenShift Online PaaS. 
+  Deploys an simple, unprivileged OpenShift service.
+  Designed for use with Red Hat's OpenShift Online PaaS.
 
 imports:
 - https://cloudify.co/spec/cloudify/6.3.0/types.yaml
@@ -31,21 +31,25 @@ inputs:
     default: { get_secret: openshift_namespace }
 
   fqdn_suffix:
+    display_label: Fqdn Suffix
     description: Domain name to append to form the final service endpoint URL.
     type: string
     default: apps.us-west-1.starter.openshift-online.com
 
   endpoint:
+    display_label: Endpoint
     description: Final service endpoint
     type: string
     default: { concat: [{ get_input: app_name }, '-', { get_input: namespace }, '.', { get_input: fqdn_suffix }] }
 
   container:
+    display_label: Container
     description: Standard container reference
     type: string
     default: jcornutt/cloudify:latest
 
   container_port:
+    display_label: Container Port
     description: Exposed container port to reference
     type: integer
     default: 8080

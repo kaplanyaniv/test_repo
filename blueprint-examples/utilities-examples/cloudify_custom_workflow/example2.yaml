@@ -13,27 +13,26 @@ node_templates:
   router:
     type: cloudify.nodes.ApplicationModule
     relationships:
-    - type: cloudify.relationships.contained_in
-      target: fake_node
-    interfaces:
-      custom:
-        sync_config:
-          implementation: router_sync_config.txt
-        backup_config:
-          implementation: router_backup_config.txt
+      - type: cloudify.relationships.contained_in
+        target: fake_node
+      interfaces:
+        custom:
+            sync_config:
+              implementation: router_sync_config.txt
+            backup_config:
+              implementation: router_backup_config.txt
 
   CPE_A:
     type: cloudify.nodes.ApplicationModule
     relationships:
-    - type: cloudify.relationships.contained_in
-      target: fake_node
-    interfaces:
-      custom:
-        sync_config:
-          implementation: cpe_sync_config.txt
-        backup_config:
-          implementation: cpe_backup_config.txt
-
+      - type: cloudify.relationships.contained_in
+        target: fake_node
+      interfaces:
+        custom:
+            sync_config:
+              implementation: cpe_sync_config.txt
+            backup_config:
+              implementation: cpe_backup_config.txt
 
 workflows:
   BackupFlow:

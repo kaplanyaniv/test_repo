@@ -10,6 +10,7 @@ imports:
 inputs:
 
   fortigate_vm_deployment_name:
+    display_label: Fortigate Vm Deployment Name
     description: Name of Fortigate Provisioning deployment
     type: string
     default: VNFM-Fortigate-Prov-Azure-vm
@@ -38,7 +39,6 @@ node_templates:
             terminal_auth: *terminal_auth
             calls:
               - template: Resources/templates/fortigate-baseline.txt
-
 
 capabilities:
   mgmt_public_ip:

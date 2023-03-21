@@ -84,7 +84,6 @@ node_templates:
           inputs:
             external_network_id: { get_input: external_network_id }
 
-
   ### PROVISIONING ###
 
   # F5 Provisioning:

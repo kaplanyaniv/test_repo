@@ -17,6 +17,7 @@ inputs:
     default: { get_secret: aws_secret_access_key }
 
   region_name:
+    display_label: Region Name
     type: string
     description: YOUR AWS REGION NAME
     default: 'us-east-1'
@@ -58,8 +59,8 @@ node_templates:
     properties:
       client_config: *client_config
     relationships:
-    - type: cloudify.relationships.connected_to
-      target: vpc
+      - type: cloudify.relationships.connected_to
+        target: vpc
 
   public_subnet:
     type: cloudify.nodes.aws.ec2.Subnet
@@ -69,10 +70,10 @@ node_templates:
         AvailabilityZone: { get_input: availability_zone }
       client_config: *client_config
     relationships:
-    - type: cloudify.relationships.depends_on
-      target: vpc
-    - type: cloudify.relationships.depends_on
-      target: internet_gateway
+      - type: cloudify.relationships.depends_on
+        target: vpc
+      - type: cloudify.relationships.depends_on
+        target: internet_gateway
 
   private_subnet:
     type: cloudify.nodes.aws.ec2.Subnet
@@ -82,30 +83,30 @@ node_templates:
         AvailabilityZone: { get_input: availability_zone }
       client_config: *client_config
     relationships:
-    - type: cloudify.relationships.depends_on
-      target: vpc
-    - type: cloudify.relationships.depends_on
-      target: internet_gateway
+      - type: cloudify.relationships.depends_on
+        target: vpc
+      - type: cloudify.relationships.depends_on
+        target: internet_gateway
 
   public_subnet_routetable:
     type: cloudify.nodes.aws.ec2.RouteTable
     properties:
       client_config: *client_config
     relationships:
-    - type: cloudify.relationships.contained_in
-      target: vpc
-    - type: cloudify.relationships.connected_to
-      target: public_subnet
+      - type: cloudify.relationships.contained_in
+        target: vpc
+      - type: cloudify.relationships.connected_to
+        target: public_subnet
 
   private_subnet_routetable:
     type: cloudify.nodes.aws.ec2.RouteTable
     properties:
       client_config: *client_config
     relationships:
-    - type: cloudify.relationships.contained_in
-      target: vpc
-    - type: cloudify.relationships.connected_to
-      target: private_subnet
+      - type: cloudify.relationships.contained_in
+        target: vpc
+      - type: cloudify.relationships.connected_to
+        target: private_subnet
 
   route_public_subnet_internet_gateway:
     type: cloudify.nodes.aws.ec2.Route
@@ -115,13 +116,13 @@ node_templates:
           DestinationCidrBlock: '0.0.0.0/0'
       client_config: *client_config
     relationships:
-    - type: cloudify.relationships.contained_in
-      target: public_subnet_routetable
-    - type: cloudify.relationships.connected_to
-      target: internet_gateway
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        stop: {}
+      - type: cloudify.relationships.contained_in
+        target: public_subnet_routetable
+      - type: cloudify.relationships.connected_to
+        target: internet_gateway
+      interfaces:
+        cloudify.interfaces.lifecycle:
+            stop: {}
 
   nat_gateway_ip:
     type: cloudify.nodes.aws.ec2.ElasticIP
@@ -138,10 +139,10 @@ node_templates:
     properties:
       client_config: *client_config
     relationships:
-    - type: cloudify.relationships.depends_on
-      target: public_subnet
-    - type: cloudify.relationships.depends_on
-      target: nat_gateway_ip
+      - type: cloudify.relationships.depends_on
+        target: public_subnet
+      - type: cloudify.relationships.depends_on
+        target: nat_gateway_ip
 
   route_private_subnet_nat_gateway:
     type: cloudify.nodes.aws.ec2.Route
@@ -151,13 +152,13 @@ node_templates:
           DestinationCidrBlock: '0.0.0.0/0'
       client_config: *client_config
     relationships:
-    - type: cloudify.relationships.contained_in
-      target: private_subnet_routetable
-    - type: cloudify.relationships.connected_to
-      target: nat_gateway
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        stop: {}
+      - type: cloudify.relationships.contained_in
+        target: private_subnet_routetable
+      - type: cloudify.relationships.connected_to
+        target: nat_gateway
+      interfaces:
+        cloudify.interfaces.lifecycle:
+            stop: {}
 
 capabilities:
 
