@@ -48,7 +48,7 @@ node_templates:
   prefix:
     type: eaas.nodes.UniquePrefixGenerator
     properties:
-        predefined_value: { get_input: env_name }
+      predefined_value: { get_input: env_name }
 
   terraform:
     type: cloudify.nodes.terraform
