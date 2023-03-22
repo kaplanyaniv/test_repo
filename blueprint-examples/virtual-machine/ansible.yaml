@@ -12,25 +12,30 @@ imports:
 inputs:
 
   aws_region_name:
-      type: string
-      default: 'us-east-1'
+    display_label: Aws Region Name
+    type: string
+    default: 'us-east-1'
 
   availability_zone:
+    display_label: Availability Zone
     type: string
     description: The availability zone in the AWS Region.
     default: { concat: [ { get_input: aws_region_name }, 'b' ] }
 
   ami_owner_filter:
+    display_label: Ami Owner Filter
     type: string
     description: The AWS AMI owner number.
     default: '263721492972'
 
   ami_name_filter:
+    display_label: Ami Name Filter
     type: string
     description: The name of the AWS AMI in the AWS region.
     default: 'CentOS7-cloudify-examples-image'
 
   instance_type:
+    display_label: Instance Type
     type: string
     default: t2.micro
 
@@ -40,6 +45,7 @@ inputs:
     default: 'ec2-user'
 
   agent_key_name:
+    display_label: Agent Key Name
     type: string
     default: agent_key
 
@@ -47,6 +53,7 @@ inputs:
     default: { get_input: env_name }
 
   env_name:
+    display_label: Env Name
     type: string
     description: Control parameters for names in resources.
     default: 'example'
@@ -63,7 +70,7 @@ node_templates:
       ansible_become: true
       run_data:
         instance_type: { get_input: instance_type }
-        ami_owner_filter: { get_input: ami_owner_filter  }
+        ami_owner_filter: { get_input: ami_owner_filter }
         ami_name_filter: { get_input: ami_name_filter }
         ec2_instance_user_data: { get_attribute: [ cloud_init, cloud_config ] }
         availability_zone: { get_input: availability_zone }
@@ -106,13 +113,13 @@ node_templates:
               security_group_id: { get_attribute: [aws_infra_info, security_group_id] }
               subnet_id: { get_attribute: [aws_infra_info, subnet_id] }
               vpc_id: { get_attribute: [aws_infra_info, vpc_id] }
-              vpc_name:  { get_attribute: [aws_infra_info, vpc_name] }
+              vpc_name: { get_attribute: [aws_infra_info, vpc_name] }
             ansible_env_vars: *env_vars
             extra_packages: *extra_packages
     relationships:
       - type: cloudify.relationships.depends_on
         target: aws_infra_info
-  
+
   aws_infra_info:
     type: cloudify.nodes.Root
     interfaces:
@@ -129,11 +136,11 @@ node_templates:
     properties:
       resource_config:
         users:
-        - name: { get_input: agent_user }
-          shell: /bin/bash
-          sudo: ['ALL=(ALL) NOPASSWD:ALL']
-          ssh-authorized-keys:
-          - { get_attribute: [agent_key, public_key_export] }
+          - name: { get_input: agent_user }
+            shell: /bin/bash
+            sudo: ['ALL=(ALL) NOPASSWD:ALL']
+            ssh-authorized-keys:
+              - { get_attribute: [agent_key, public_key_export] }
     relationships:
       - type: cloudify.relationships.depends_on
         target: agent_key
@@ -157,7 +164,7 @@ capabilities:
 
   endpoint:
     description: The external endpoint of the application.
-    value:  { get_attribute: [aws_infra_info, public_ip] }
+    value: { get_attribute: [aws_infra_info, public_ip] }
 
   user:
     description: user ID.

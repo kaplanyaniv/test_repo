@@ -8,17 +8,19 @@ imports:
 inputs:
 
   env_name:
+    display_label: Env Name
     type: string
     description: Control parameters for names in resources.
     default: 'cfyinfra'
 
   resource_prefix:
-    default: {  get_input: env_name }
+    default: { get_input: env_name }
 
   resource_suffix:
     default: '0'
 
   location:
+    display_label: Location
     type: string
     description: Your Azure Region.
     default: eastus2
@@ -75,6 +77,7 @@ inputs:
       version: latest
 
   size:
+    display_label: Size
     description: >
        Name of Virtual Machine Size in Azure.
     type: string
@@ -92,6 +95,7 @@ inputs:
           - Standard_B20ms
 
   retry_after:
+    display_label: Retry After
     type: integer
     default: 60
 
@@ -100,6 +104,7 @@ inputs:
     default: centos
 
   agent_key_name:
+    display_label: Agent Key Name
     type: string
     default: agent_key
 
@@ -114,7 +119,7 @@ dsl_definitions:
 node_templates:
 
   vm:
-    type: cloudify.azure.nodes.compute.VirtualMachine
+    type: cloudify.nodes.azure.compute.VirtualMachine
     properties:
       location: { get_input: location }
       retry_after: { get_input: retry_after }
@@ -131,8 +136,8 @@ node_templates:
           linuxConfiguration:
             ssh:
               publicKeys:
-              - keydata: { get_attribute: [agent_key, public_key_export] }
-                path: { concat: [ '/home/', { get_input: agent_user }, '/.ssh/authorized_keys' ] }
+                - keydata: { get_attribute: [agent_key, public_key_export] }
+                  path: { concat: [ '/home/', { get_input: agent_user }, '/.ssh/authorized_keys' ] }
             disablePasswordAuthentication: true
       agent_config:
         install_method: none
@@ -140,33 +145,33 @@ node_templates:
         user: { get_input: agent_user }
       use_public_ip: true
     relationships:
-    - type: cloudify.azure.relationships.contained_in_resource_group
-      target: resource_group
-    - type: cloudify.azure.relationships.connected_to_storage_account
-      target: storage_account
-    - type: cloudify.azure.relationships.connected_to_availability_set
-      target: availability_set
-    - type: cloudify.azure.relationships.connected_to_nic
-      target: nic
-    - type: cloudify.relationships.depends_on
-      target: agent_key
+      - type: cloudify.relationships.azure.contained_in_resource_group
+        target: resource_group
+      - type: cloudify.relationships.azure.connected_to_storage_account
+        target: storage_account
+      - type: cloudify.relationships.azure.connected_to_availability_set
+        target: availability_set
+      - type: cloudify.relationships.azure.connected_to_nic
+        target: nic
+      - type: cloudify.relationships.depends_on
+        target: agent_key
 
   nic:
-    type: cloudify.azure.nodes.network.NetworkInterfaceCard
+    type: cloudify.nodes.azure.network.NetworkInterfaceCard
     properties:
       location: { get_input: location }
       azure_config: *azure_config
       retry_after: { get_input: retry_after }
     relationships:
-    - type: cloudify.azure.relationships.contained_in_resource_group
-      target: resource_group
-    - type: cloudify.azure.relationships.nic_connected_to_network_security_group
-      target: network_security_group
-    - type: cloudify.azure.relationships.nic_connected_to_ip_configuration
-      target: ip_config
+      - type: cloudify.relationships.azure.contained_in_resource_group
+        target: resource_group
+      - type: cloudify.azure.relationships.nic_connected_to_network_security_group
+        target: network_security_group
+      - type: cloudify.relationships.azure.nic_connected_to_ip_configuration
+        target: ip_config
 
   ip_config:
-    type: cloudify.azure.nodes.network.IPConfiguration
+    type: cloudify.nodes.azure.network.IPConfiguration
     properties:
       location: { get_input: location }
       azure_config: *azure_config
@@ -174,13 +179,13 @@ node_templates:
       resource_config:
         privateIPAllocationMethod: Dynamic
     relationships:
-    - type: cloudify.azure.relationships.ip_configuration_connected_to_subnet
-      target: subnet
-    - type: cloudify.azure.relationships.ip_configuration_connected_to_public_ip
-      target: ip
+      - type: cloudify.relationships.azure.ip_configuration_connected_to_subnet
+        target: subnet
+      - type: cloudify.relationships.azure.ip_configuration_connected_to_public_ip
+        target: ip
 
   network_security_group:
-    type: cloudify.azure.nodes.network.NetworkSecurityGroup
+    type: cloudify.nodes.azure.network.NetworkSecurityGroup
     properties:
       name: {concat:[{get_input: resource_prefix},nsg,{get_input: resource_suffix}]}
       location: { get_input: location }
@@ -188,89 +193,89 @@ node_templates:
       retry_after: { get_input: retry_after }
       resource_config:
         securityRules:
-        - name: ssh
-          properties:
-            description: SSH access
-            protocol: Tcp
-            sourcePortRange: '*'
-            destinationPortRange: 22
-            sourceAddressPrefix: '*'
-            destinationAddressPrefix: '*'
-            priority: 100
-            access: 'Allow'
-            direction: Inbound
-        - name: http
-          properties:
-            description: HTTP access
-            protocol: Tcp
-            sourcePortRange: '*'
-            destinationPortRange: 80
-            sourceAddressPrefix: '*'
-            destinationAddressPrefix: '*'
-            priority: 101
-            access: 'Allow'
-            direction: Inbound
-        - name: http_jboss
-          properties:
-            description: HTTP access
-            protocol: Tcp
-            sourcePortRange: '*'
-            destinationPortRange: 8080
-            sourceAddressPrefix: '*'
-            destinationAddressPrefix: '*'
-            priority: 102
-            access: 'Allow'
-            direction: Inbound
-        - name: http_jboss_admin
-          properties:
-            description: HTTP access
-            protocol: Tcp
-            sourcePortRange: '*'
-            destinationPortRange: 9990
-            sourceAddressPrefix: '*'
-            destinationAddressPrefix: '*'
-            priority: 103
-            access: 'Allow'
-            direction: Inbound
-        - name: docker_api_port
-          properties:
-            description: HTTP access
-            protocol: Tcp
-            sourcePortRange: '*'
-            destinationPortRange: 2375
-            sourceAddressPrefix: '*'
-            destinationAddressPrefix: '*'
-            priority: 104
-            access: 'Allow'
-            direction: Inbound
-        - name: localstack_endpoint_port
-          properties:
-            description: HTTP access
-            protocol: Tcp
-            sourcePortRange: '*'
-            destinationPortRange: 4566
-            sourceAddressPrefix: '*'
-            destinationAddressPrefix: '*'
-            priority: 105
-            access: 'Allow'
-            direction: Inbound
-        - name: localstack_intenal_api_port
-          properties:
-            description: HTTP access
-            protocol: Tcp
-            sourcePortRange: '*'
-            destinationPortRange: 4571
-            sourceAddressPrefix: '*'
-            destinationAddressPrefix: '*'
-            priority: 106
-            access: 'Allow'
-            direction: Inbound
+          - name: ssh
+            properties:
+              description: SSH access
+              protocol: Tcp
+              sourcePortRange: '*'
+              destinationPortRange: 22
+              sourceAddressPrefix: '*'
+              destinationAddressPrefix: '*'
+              priority: 100
+              access: 'Allow'
+              direction: Inbound
+          - name: http
+            properties:
+              description: HTTP access
+              protocol: Tcp
+              sourcePortRange: '*'
+              destinationPortRange: 80
+              sourceAddressPrefix: '*'
+              destinationAddressPrefix: '*'
+              priority: 101
+              access: 'Allow'
+              direction: Inbound
+          - name: http_jboss
+            properties:
+              description: HTTP access
+              protocol: Tcp
+              sourcePortRange: '*'
+              destinationPortRange: 8080
+              sourceAddressPrefix: '*'
+              destinationAddressPrefix: '*'
+              priority: 102
+              access: 'Allow'
+              direction: Inbound
+          - name: http_jboss_admin
+            properties:
+              description: HTTP access
+              protocol: Tcp
+              sourcePortRange: '*'
+              destinationPortRange: 9990
+              sourceAddressPrefix: '*'
+              destinationAddressPrefix: '*'
+              priority: 103
+              access: 'Allow'
+              direction: Inbound
+          - name: docker_api_port
+            properties:
+              description: HTTP access
+              protocol: Tcp
+              sourcePortRange: '*'
+              destinationPortRange: 2375
+              sourceAddressPrefix: '*'
+              destinationAddressPrefix: '*'
+              priority: 104
+              access: 'Allow'
+              direction: Inbound
+          - name: localstack_endpoint_port
+            properties:
+              description: HTTP access
+              protocol: Tcp
+              sourcePortRange: '*'
+              destinationPortRange: 4566
+              sourceAddressPrefix: '*'
+              destinationAddressPrefix: '*'
+              priority: 105
+              access: 'Allow'
+              direction: Inbound
+          - name: localstack_intenal_api_port
+            properties:
+              description: HTTP access
+              protocol: Tcp
+              sourcePortRange: '*'
+              destinationPortRange: 4571
+              sourceAddressPrefix: '*'
+              destinationAddressPrefix: '*'
+              priority: 106
+              access: 'Allow'
+              direction: Inbound
     relationships:
-    - type: cloudify.azure.relationships.contained_in_resource_group
-      target: resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
+        target: resource_group
 
   ip:
-    type: cloudify.azure.nodes.network.PublicIPAddress
+    type: cloudify.nodes.azure.network.PublicIPAddress
     properties:
       location: { get_input: location }
       azure_config: *azure_config
@@ -278,22 +283,22 @@ node_templates:
       resource_config:
         publicIPAllocationMethod: Static
     relationships:
-    - type: cloudify.azure.relationships.contained_in_resource_group
-      target: resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
+        target: resource_group
 
   availability_set:
-    type: cloudify.azure.nodes.compute.AvailabilitySet
+    type: cloudify.nodes.azure.compute.AvailabilitySet
     properties:
       name: {concat:[{get_input: resource_prefix},availset,{get_input: resource_suffix}]}
       location: { get_input: location }
       azure_config: *azure_config
       retry_after: { get_input: retry_after }
     relationships:
-    - type: cloudify.azure.relationships.contained_in_resource_group
-      target: resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
+        target: resource_group
 
   storage_account:
-    type: cloudify.azure.nodes.storage.StorageAccount
+    type: cloudify.nodes.azure.storage.StorageAccount
     properties:
       location: { get_input: location }
       azure_config: *azure_config
@@ -301,11 +306,11 @@ node_templates:
       resource_config:
         accountType: Standard_LRS
     relationships:
-    - type: cloudify.azure.relationships.contained_in_resource_group
-      target: resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
+        target: resource_group
 
   subnet:
-    type: cloudify.azure.nodes.network.Subnet
+    type: cloudify.nodes.azure.network.Subnet
     properties:
       resource_group_name: { concat: [ { get_input: resource_prefix }, rg, { get_input: resource_suffix } ] }
       name: { concat: [ { get_input: resource_prefix }, sub, { get_input: resource_suffix } ] }
@@ -314,22 +319,22 @@ node_templates:
       resource_config:
         addressPrefix: 10.10.0.0/24
     relationships:
-    - type: cloudify.azure.relationships.contained_in_virtual_network
-      target: network
+      - type: cloudify.relationships.azure.contained_in_virtual_network
+        target: network
 
   network:
-    type: cloudify.azure.nodes.network.VirtualNetwork
+    type: cloudify.nodes.azure.network.VirtualNetwork
     properties:
       resource_group_name: { concat: [ { get_input: resource_prefix }, rg, { get_input: resource_suffix } ] }
       name: { concat: [ { get_input: resource_prefix }, vn, { get_input: resource_suffix } ] }
       azure_config: *azure_config
       location: { get_input: location }
     relationships:
-    - type: cloudify.azure.relationships.contained_in_resource_group
-      target: resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
+        target: resource_group
 
   resource_group:
-    type: cloudify.azure.nodes.ResourceGroup
+    type: cloudify.nodes.azure.ResourceGroup
     properties:
       name: { concat: [ { get_input: resource_prefix }, rg, { get_input: resource_suffix } ] }
       location: { get_input: location }

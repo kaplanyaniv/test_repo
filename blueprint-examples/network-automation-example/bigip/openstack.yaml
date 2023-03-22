@@ -18,21 +18,24 @@ inputs:
     default: { get_secret: resource_suffix }
 
   openstack_network_deployment_name:
+    display_label: Openstack Network Deployment Name
     type: string
     default: VNFM-Networking-Prov-Openstack-networks
 
   flavor_id:
+    display_label: Flavor Id
     type: string
     default: 8f68d4e5-4281-48c0-ad43-a8ac58d635f0
 
   image_id:
+    display_label: Image Id
     type: string
     default: 7f5477bd-c2a8-4608-82ae-0ca2a9bf5254
 
   vnf_vm_name:
+    display_label: Vnf Vm Name
     type: string
     default: bigip
-
 
 dsl_definitions:
 
@@ -106,7 +109,6 @@ node_templates:
     relationships:
       - type: cloudify.relationships.depends_on
         target: network_topology
-
 
   mgmt_floating_ip_address:
     type: cloudify.nodes.openstack.FloatingIP
@@ -227,17 +229,16 @@ node_templates:
         kwargs:
           config_drive: true
     relationships:
-    - type: cloudify.relationships.openstack.server_connected_to_port
-      target: mgmt_port
-    - type: cloudify.relationships.openstack.server_connected_to_port
-      target: wan_port
-    - type: cloudify.relationships.openstack.server_connected_to_port
-      target: public_port
-    - type: cloudify.relationships.depends_on
-      target: image
-    - type: cloudify.relationships.depends_on
-      target: cloud_config
-
+      - type: cloudify.relationships.openstack.server_connected_to_port
+        target: mgmt_port
+      - type: cloudify.relationships.openstack.server_connected_to_port
+        target: wan_port
+      - type: cloudify.relationships.openstack.server_connected_to_port
+        target: public_port
+      - type: cloudify.relationships.depends_on
+        target: image
+      - type: cloudify.relationships.depends_on
+        target: cloud_config
 
 capabilities:
 

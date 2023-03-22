@@ -10,38 +10,44 @@ imports:
 inputs:
 
   agent_user:
+    display_label: Agent User
     description: >
       The username of the agent running on the instance created from the image.
     type: string
     default: 'ubuntu'
 
   region_name:
+    display_label: Region Name
     type: string
     default: 'eastus'
     constraints:
-    - valid_values: [westus,westus2,eastus,centralus,centraluseuap,southcentralus,northcentralus,westcentralus,eastus2,eastus2euap,brazilsouth,brazilus,northeurope,westeurope,eastasia,southeastasia,japanwest,japaneast,koreacentral,koreasouth,southindia,westindia,centralindia,australiaeast,australiasoutheast,canadacentral,canadaeast,uksouth,ukwest,francecentral,francesouth,australiacentral,australiacentral2,uaecentral,uaenorth,southafricanorth,southafricawest,switzerlandnorth,switzerlandwest,germanynorth,germanywestcentral,norwayeast,norwaywest,brazilsoutheast,westus3,swedencentral,swedensouth]
+      - valid_values: [westus,westus2,eastus,centralus,centraluseuap,southcentralus,northcentralus,westcentralus,eastus2,eastus2euap,brazilsouth,brazilus,northeurope,westeurope,eastasia,southeastasia,japanwest,japaneast,koreacentral,koreasouth,southindia,westindia,centralindia,australiaeast,australiasoutheast,canadacentral,canadaeast,uksouth,ukwest,francecentral,francesouth,australiacentral,australiacentral2,uaecentral,uaenorth,southafricanorth,southafricawest,switzerlandnorth,switzerlandwest,germanynorth,germanywestcentral,norwayeast,norwaywest,brazilsoutheast,westus3,swedencentral,swedensouth]
 
   image:
     description: Azure Image reference
-    default: 
+    default:
       publisher: Canonical
       offer: UbuntuServer
       sku: 18.04-LTS
       version: latest
 
   agent_key_name:
+    display_label: Agent Key Name
     type: string
     default: agent_key
 
   location:
+    display_label: Location
     type: string
     default: https://github.com/cloudify-community/tf-source/archive/refs/heads/main.zip
 
   source_path:
+    display_label: Source Path
     type: string
     default: template/modules/azure/public_vm
 
   prefix:
+    display_label: Prefix
     type: string
     default: cfy
 

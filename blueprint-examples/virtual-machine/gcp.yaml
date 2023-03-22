@@ -5,25 +5,28 @@ imports:
   - plugin:cloudify-gcp-plugin?version= >=1.6.0
   - plugin:cloudify-utilities-plugin?version= >=1.22.1
 
-
 inputs:
 
   region:
+    display_label: Region
     type: string
     description: The GCP region to deploy the application in, such as europe-west1.
     default: 'europe-west1'
 
   zone:
+    display_label: Zone
     type: string
     description: The GCP zone to deploy the application in, such as europe-west1-b.
     default: 'europe-west1-b'
 
   image:
+    display_label: Image
     type: string
     description: Centos image.
     default: https://www.googleapis.com/compute/v1/projects/centos-cloud/global/images/centos-7-v20191210
 
   instance_type:
+    display_label: Instance Type
     type: string
     description: A small GCP machine type.
     default: n1-standard-2
@@ -34,10 +37,12 @@ inputs:
     default: 'centos'
 
   agent_key_name:
+    display_label: Agent Key Name
     type: string
     default: agent_key
 
   env_name:
+    display_label: Env Name
     type: string
     description: Control parameters for names in resources.
     default: 'example'
@@ -62,23 +67,23 @@ node_templates:
       zone: { get_input: zone }
       external_ip: true
     relationships:
-    - type: cloudify.relationships.connected_to
-      target: firewall
-    - type: cloudify.relationships.depends_on
-      target: subnet
-    - type: cloudify.relationships.depends_on
-      target: agent_key
-    - type: cloudify.relationships.depends_on
-      target: disk
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        create:
-          implementation: scripts/gcp/key.py
-          executor: central_deployment_agent
-          inputs:
-            user: { get_input: agent_user }
-            ssh_keys:
-              - { get_attribute: [agent_key, public_key_export] }
+      - type: cloudify.relationships.connected_to
+        target: firewall
+      - type: cloudify.relationships.depends_on
+        target: subnet
+      - type: cloudify.relationships.depends_on
+        target: agent_key
+      - type: cloudify.relationships.depends_on
+        target: disk
+      interfaces:
+        cloudify.interfaces.lifecycle:
+            create:
+              implementation: scripts/gcp/key.py
+              executor: central_deployment_agent
+              inputs:
+                  user: { get_input: agent_user }
+                  ssh_keys:
+                    - { get_attribute: [agent_key, public_key_export] }
 
   disk:
     type: cloudify.gcp.nodes.Volume
@@ -116,8 +121,8 @@ node_templates:
       subnet: 10.11.12.0/22
       gcp_config: *gcp_config
     relationships:
-    - type: cloudify.gcp.relationships.contained_in_network
-      target: network
+      - type: cloudify.gcp.relationships.contained_in_network
+        target: network
 
   network:
     type: cloudify.gcp.nodes.Network
@@ -144,8 +149,8 @@ groups:
 
   vm-group:
     members:
-    - vm
-    - disk
+      - vm
+      - disk
 
 policies:
 

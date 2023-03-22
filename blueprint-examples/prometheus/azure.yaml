@@ -12,22 +12,27 @@ imports:
 inputs:
 
   subscription_id:
+    display_label: Subscription Id
     type: string
     default: { get_secret: azure_subscription_id }
 
   tenant_id:
+    display_label: Tenant Id
     type: string
     default: { get_secret: azure_tenant_id }
 
   client_id:
+    display_label: Client Id
     type: string
     default: { get_secret: azure_client_id }
 
   client_secret:
+    display_label: Client Secret
     type: string
     default: { get_secret: azure_client_secret }
 
   location:
+    display_label: Location
     type: string
     description: Your Azure Region.
     default: eastus2
@@ -53,6 +58,7 @@ inputs:
     default: centos
 
   public_subnet_cidr:
+    display_label: Public Subnet Cidr
     type: string
     default: 10.10.0.0/24
 
@@ -60,6 +66,7 @@ inputs:
     description: a list of jobs.
 
   agent_key_name:
+    display_label: Agent Key Name
     type: string
     default: agent_key
 
@@ -82,22 +89,22 @@ dsl_definitions:
 node_templates:
 
   resource-group:
-    type: cloudify.azure.nodes.ResourceGroup
+    type: cloudify.nodes.azure.ResourceGroup
     properties:
       azure_config: *client_config
       location: { get_input: location }
 
   network:
-    type: cloudify.azure.nodes.network.VirtualNetwork
+    type: cloudify.nodes.azure.network.VirtualNetwork
     properties:
       azure_config: *client_config
       location: { get_input: location }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource-group
 
   security-group:
-    type: cloudify.azure.nodes.network.NetworkSecurityGroup
+    type: cloudify.nodes.azure.network.NetworkSecurityGroup
     properties:
       azure_config: *client_config
       location: { get_input: location }
@@ -126,81 +133,81 @@ node_templates:
               access: Allow
               direction: Inbound
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource-group
 
   availability-set:
-    type: cloudify.azure.nodes.compute.AvailabilitySet
+    type: cloudify.nodes.azure.compute.AvailabilitySet
     properties:
       azure_config: *client_config
       location: { get_input: location }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource-group
 
   storage-account:
-    type: cloudify.azure.nodes.storage.StorageAccount
+    type: cloudify.nodes.azure.storage.StorageAccount
     properties:
       azure_config: *client_config
       location: { get_input: location }
       resource_config:
         accountType: Standard_LRS
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource-group
 
   public-subnet:
-    type: cloudify.azure.nodes.network.Subnet
+    type: cloudify.nodes.azure.network.Subnet
     properties:
       azure_config: *client_config
       location: { get_input: location }
       resource_config:
         addressPrefix: { get_input: public_subnet_cidr }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_virtual_network
+      - type: cloudify.relationships.azure.contained_in_virtual_network
         target: network
 
   prometheus-host-ip:
-    type: cloudify.azure.nodes.network.PublicIPAddress
+    type: cloudify.nodes.azure.network.PublicIPAddress
     properties:
       azure_config: *client_config
       location: { get_input: location }
       resource_config:
         publicIPAllocationMethod: Static
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource-group
 
   prometheus-host-ip-config:
-    type: cloudify.azure.nodes.network.IPConfiguration
+    type: cloudify.nodes.azure.network.IPConfiguration
     properties:
       azure_config: *client_config
       location: { get_input: location }
       resource_config:
         privateIPAllocationMethod: Dynamic
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource-group
-      - type: cloudify.azure.relationships.ip_configuration_connected_to_subnet
+      - type: cloudify.relationships.azure.ip_configuration_connected_to_subnet
         target: public-subnet
-      - type: cloudify.azure.relationships.ip_configuration_connected_to_public_ip
+      - type: cloudify.relationships.azure.ip_configuration_connected_to_public_ip
         target: prometheus-host-ip
 
   prometheus-host-nic:
-    type: cloudify.azure.nodes.network.NetworkInterfaceCard
+    type: cloudify.nodes.azure.network.NetworkInterfaceCard
     properties:
       azure_config: *client_config
       location: { get_input: location }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource-group
       - type: cloudify.azure.relationships.nic_connected_to_network_security_group
         target: security-group
-      - type: cloudify.azure.relationships.nic_connected_to_ip_configuration
+      - type: cloudify.relationships.azure.nic_connected_to_ip_configuration
         target: prometheus-host-ip-config
 
   prometheus-host:
-    type: cloudify.azure.nodes.compute.VirtualMachine
+    type: cloudify.nodes.azure.compute.VirtualMachine
     properties:
       azure_config: *client_config
       agent_config:
@@ -218,23 +225,23 @@ node_templates:
         storageProfile:
           imageReference: { get_input: image }
         osProfile:
-          customData:  { get_attribute: [ cloud_init, cloud_config ] }
+          customData: { get_attribute: [ cloud_init, cloud_config ] }
           adminUsername: { get_input: agent_user }
           adminPassword: ''
           linuxConfiguration:
             ssh:
               publicKeys:
-              - keydata: { get_attribute: [agent_key, public_key_export] }
-                path: { concat: [ '/home/', { get_input: agent_user }, '/.ssh/authorized_keys' ] }
+                - keydata: { get_attribute: [agent_key, public_key_export] }
+                  path: { concat: [ '/home/', { get_input: agent_user }, '/.ssh/authorized_keys' ] }
             disablePasswordAuthentication: true
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource-group
-      - type: cloudify.azure.relationships.connected_to_storage_account
+      - type: cloudify.relationships.azure.connected_to_storage_account
         target: storage-account
-      - type: cloudify.azure.relationships.connected_to_availability_set
+      - type: cloudify.relationships.azure.connected_to_availability_set
         target: availability-set
-      - type: cloudify.azure.relationships.connected_to_nic
+      - type: cloudify.relationships.azure.connected_to_nic
         target: prometheus-host-nic
       - type: cloudify.relationships.depends_on
         target: cloud_init

@@ -12,52 +12,63 @@ imports:
 inputs:
   # Azure account information
   subscription_id:
+    display_label: Subscription Id
     type: string
     required: false
     default: { get_secret: azure_subscription_id }
 
   tenant_id:
+    display_label: Tenant Id
     type: string
     required: false
     default: { get_secret: azure_tenant_id }
 
   client_id:
+    display_label: Client Id
     type: string
     required: false
     default: { get_secret: azure_client_id }
 
   client_secret:
+    display_label: Client Secret
     type: string
     required: false
     default: { get_secret: azure_client_secret }
 
   location:
+    display_label: Location
     type: string
     required: true
     default: eastus2
 
   env_name:
+    display_label: Env Name
     type: string
     description: Must be a letter.
     default: 'a'
 
   resource_group_name:
+    display_label: Resource Group Name
     type: string
     default: { concat: [ 'aks-test-rg', { get_input: env_name } ] }
 
   managed_cluster_name:
+    display_label: Managed Cluster Name
     type: string
     default: { concat: [ 'aks-test-mc', { get_input: env_name } ] }
 
   service_account_name:
+    display_label: Service Account Name
     type: string
     default: examples-user
 
   service_account_namespace:
+    display_label: Service Account Namespace
     type: string
     default: default
 
   agent_key_name:
+    display_label: Agent Key Name
     type: string
     default: agent_key
 
@@ -91,7 +102,7 @@ dsl_definitions:
       adminUsername: "azureuser"
       ssh:
         publicKeys:
-          - keyData : { get_attribute: [agent_key, public_key_export] }
+          - keyData: { get_attribute: [agent_key, public_key_export] }
     network_profile:
       loadBalancerSku: "standard"
       outboundType: "loadBalancer"
@@ -104,18 +115,17 @@ dsl_definitions:
     addon_profiles: {}
     enable_rbac: true
 
-
 node_templates:
 
   resource_group:
-    type: cloudify.azure.nodes.ResourceGroup
+    type: cloudify.nodes.azure.ResourceGroup
     properties:
       name: { get_input: resource_group_name }
       location: { get_input: location }
       azure_config: *azure_config
 
   managed_cluster:
-    type: cloudify.azure.nodes.compute.ManagedCluster
+    type: cloudify.nodes.azure.compute.ManagedCluster
     properties:
       resource_group: { get_input: resource_group_name }
       name: { get_input: managed_cluster_name }
@@ -123,10 +133,10 @@ node_templates:
       azure_config: *azure_config
       store_kube_config_in_runtime: true
     relationships:
-    - type: cloudify.azure.relationships.contained_in_resource_group
-      target: resource_group
-    - type: cloudify.relationships.depends_on
-      target: agent_key
+      - type: cloudify.relationships.azure.contained_in_resource_group
+        target: resource_group
+      - type: cloudify.relationships.depends_on
+        target: agent_key
 
   kubernetes_master:
     type: cloudify.kubernetes.nodes.Master
@@ -169,9 +179,9 @@ node_templates:
           kind: ClusterRole
           name: cluster-admin
         subjects:
-        - kind: ServiceAccount
-          name: { get_input: service_account_name }
-          namespace: { get_input: service_account_namespace }
+          - kind: ServiceAccount
+            name: { get_input: service_account_name }
+            namespace: { get_input: service_account_namespace }
       options:
         namespace: { get_input: service_account_namespace }
     relationships:
@@ -232,7 +242,7 @@ node_templates:
       client_config:
         configuration:
           api_options:
-            host:  { get_attribute: [managed_cluster, kubeconf, clusters, 0, cluster, server ] }
+            host: { get_attribute: [managed_cluster, kubeconf, clusters, 0, cluster, server ] }
             api_key: { get_attribute: [ store_token, token ] }
             debug: false
             verify_ssl: false
@@ -257,8 +267,8 @@ node_templates:
         postdelete: {}
 
   agent_key:
-      type: cloudify.keys.nodes.RSAKey
-      properties:
+    type: cloudify.keys.nodes.RSAKey
+    properties:
         resource_config:
           key_name: { get_input: agent_key_name }
           openssh_format: true

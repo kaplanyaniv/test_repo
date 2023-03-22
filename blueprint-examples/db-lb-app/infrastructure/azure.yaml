@@ -19,6 +19,7 @@ inputs:
     default: centos
 
   public_subnet_cidr:
+    display_label: Public Subnet Cidr
     type: string
     default: 10.10.0.0/24
 
@@ -44,7 +45,7 @@ dsl_definitions:
 node_templates:
 
   host:
-    type: cloudify.azure.nodes.compute.VirtualMachine
+    type: cloudify.nodes.azure.compute.VirtualMachine
     properties:
       azure_config: *client_config
       agent_config:
@@ -66,68 +67,68 @@ node_templates:
             sku: '7-CI'
             version: latest
         osProfile:
-          customData:  { get_attribute: [ cloud_init, cloud_config ] }
+          customData: { get_attribute: [ cloud_init, cloud_config ] }
           adminUsername: { get_input: agent_user }
           adminPassword: ''
           linuxConfiguration:
             ssh:
               publicKeys:
-              - keydata: { get_secret: agent_key_public }
-                path: { concat: [ '/home/', { get_input: agent_user }, '/.ssh/authorized_keys' ] }
+                - keydata: { get_secret: agent_key_public }
+                  path: { concat: [ '/home/', { get_input: agent_user }, '/.ssh/authorized_keys' ] }
             disablePasswordAuthentication: true
     relationships:
       - type: cloudify.relationships.depends_on
         target: cloud_init
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
-      - type: cloudify.azure.relationships.connected_to_storage_account
+      - type: cloudify.relationships.azure.connected_to_storage_account
         target: storage_account
-      - type: cloudify.azure.relationships.connected_to_availability_set
+      - type: cloudify.relationships.azure.connected_to_availability_set
         target: availability_set
-      - type: cloudify.azure.relationships.connected_to_nic
+      - type: cloudify.relationships.azure.connected_to_nic
         target: nic
 
   nic:
-    type: cloudify.azure.nodes.network.NetworkInterfaceCard
+    type: cloudify.nodes.azure.network.NetworkInterfaceCard
     properties:
       azure_config: *client_config
       location: { get_capability: [ azure, location ] }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
       - type: cloudify.azure.relationships.nic_connected_to_network_security_group
         target: security_group
-      - type: cloudify.azure.relationships.nic_connected_to_ip_configuration
+      - type: cloudify.relationships.azure.nic_connected_to_ip_configuration
         target: ip_config
 
   ip_config:
-    type: cloudify.azure.nodes.network.IPConfiguration
+    type: cloudify.nodes.azure.network.IPConfiguration
     properties:
       azure_config: *client_config
       location: { get_capability: [ azure, location ] }
       resource_config:
         privateIPAllocationMethod: Dynamic
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
-      - type: cloudify.azure.relationships.ip_configuration_connected_to_subnet
+      - type: cloudify.relationships.azure.ip_configuration_connected_to_subnet
         target: subnet
-      - type: cloudify.azure.relationships.ip_configuration_connected_to_public_ip
+      - type: cloudify.relationships.azure.ip_configuration_connected_to_public_ip
         target: ip
 
   ip:
-    type: cloudify.azure.nodes.network.PublicIPAddress
+    type: cloudify.nodes.azure.network.PublicIPAddress
     properties:
       azure_config: *client_config
       location: { get_capability: [ azure, location ] }
       resource_config:
         publicIPAllocationMethod: Static
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
 
   security_group:
-    type: cloudify.azure.nodes.network.NetworkSecurityGroup
+    type: cloudify.nodes.azure.network.NetworkSecurityGroup
     properties:
       azure_config: *client_config
       location: { get_capability: [ azure, location ] }
@@ -200,11 +201,11 @@ node_templates:
               access: Allow
               direction: Inbound
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
 
   subnet:
-    type: cloudify.azure.nodes.network.Subnet
+    type: cloudify.nodes.azure.network.Subnet
     properties:
       azure_config: *client_config
       use_external_resource: true
@@ -213,42 +214,42 @@ node_templates:
       resource_config:
         addressPrefix: { get_input: public_subnet_cidr }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_virtual_network
+      - type: cloudify.relationships.azure.contained_in_virtual_network
         target: network
 
   network:
-    type: cloudify.azure.nodes.network.VirtualNetwork
+    type: cloudify.nodes.azure.network.VirtualNetwork
     properties:
       azure_config: *client_config
       use_external_resource: true
       name: { get_capability: [ azure, virtual_network ] }
       location: { get_capability: [ azure, location ] }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
 
   availability_set:
-    type: cloudify.azure.nodes.compute.AvailabilitySet
+    type: cloudify.nodes.azure.compute.AvailabilitySet
     properties:
       azure_config: *client_config
       location: { get_capability: [ azure, location ] }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
 
   storage_account:
-    type: cloudify.azure.nodes.storage.StorageAccount
+    type: cloudify.nodes.azure.storage.StorageAccount
     properties:
       azure_config: *client_config
       location: { get_capability: [ azure, location ] }
       resource_config:
         accountType: Standard_LRS
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
 
   resource_group:
-    type: cloudify.azure.nodes.ResourceGroup
+    type: cloudify.nodes.azure.ResourceGroup
     properties:
       azure_config: *client_config
       use_external_resource: true

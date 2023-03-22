@@ -10,6 +10,7 @@ imports:
 inputs:
 
   retry_after:
+    display_label: Retry After
     type: integer
     default: 60
 
@@ -29,7 +30,6 @@ inputs:
     description: Suffix of every resource created at this deployment on Azure.
     default: { get_secret: resource_suffix }
 
-
 dsl_definitions:
 
   client_config: &client_config
@@ -40,7 +40,7 @@ dsl_definitions:
 
 node_templates:
   resource_group:
-    type: cloudify.azure.nodes.ResourceGroup
+    type: cloudify.nodes.azure.ResourceGroup
     properties:
       azure_config: *client_config
       name: {get_capability: [{ get_input: azure_network_deployment_name }, resource_group] }
@@ -48,7 +48,7 @@ node_templates:
       use_external_resource: true
 
   virtual_network:
-    type: cloudify.azure.nodes.network.VirtualNetwork
+    type: cloudify.nodes.azure.network.VirtualNetwork
     properties:
       use_external_resource: true
       azure_config: *client_config
@@ -57,11 +57,11 @@ node_templates:
       location: { get_secret: azure_location }
       retry_after: { get_input: retry_after }
     relationships:
-      - type: cloudify.azure.relationships.contained_in_resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
         target: resource_group
 
   mgmt_subnet:
-    type: cloudify.azure.nodes.network.Subnet
+    type: cloudify.nodes.azure.network.Subnet
     properties:
       use_external_resource: true
       azure_config: *client_config
@@ -70,11 +70,11 @@ node_templates:
       location: { get_secret: azure_location }
       retry_after: { get_input: retry_after }
     relationships:
-    - type: cloudify.azure.relationships.contained_in_virtual_network
-      target: virtual_network
+      - type: cloudify.relationships.azure.contained_in_virtual_network
+        target: virtual_network
 
   public_subnet:
-    type: cloudify.azure.nodes.network.Subnet
+    type: cloudify.nodes.azure.network.Subnet
     properties:
       use_external_resource: true
       azure_config: *client_config
@@ -83,11 +83,11 @@ node_templates:
       location: { get_secret: azure_location }
       retry_after: { get_input: retry_after }
     relationships:
-    - type: cloudify.azure.relationships.contained_in_virtual_network
-      target: virtual_network
+      - type: cloudify.relationships.azure.contained_in_virtual_network
+        target: virtual_network
 
   wan_subnet:
-    type: cloudify.azure.nodes.network.Subnet
+    type: cloudify.nodes.azure.network.Subnet
     properties:
       use_external_resource: true
       azure_config: *client_config
@@ -96,12 +96,12 @@ node_templates:
       location: { get_secret: azure_location }
       retry_after: { get_input: retry_after }
     relationships:
-    - type: cloudify.azure.relationships.contained_in_virtual_network
-      target: virtual_network
+      - type: cloudify.relationships.azure.contained_in_virtual_network
+        target: virtual_network
 
   #Security group
   network_security_group:
-    type: cloudify.azure.nodes.network.NetworkSecurityGroup
+    type: cloudify.nodes.azure.network.NetworkSecurityGroup
     properties:
       azure_config: *client_config
       use_external_resource: true
@@ -109,5 +109,5 @@ node_templates:
       location: { get_secret: azure_location }
       retry_after: { get_input: retry_after }
     relationships:
-    - type: cloudify.azure.relationships.contained_in_resource_group
-      target: resource_group
+      - type: cloudify.relationships.azure.contained_in_resource_group
+        target: resource_group
