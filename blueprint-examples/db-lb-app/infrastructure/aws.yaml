@@ -13,10 +13,12 @@ imports:
 inputs:
 
   env_name:
+    display_label: Env Name
     description: A prefix for resource names for resources that will be created, for example, db or lb.
     type: string
 
   network_deployment_name:
+    display_label: Network Deployment Name
     description: >
       The deployment ID of an existing deployment.
       For example, aws-example-network.
@@ -63,12 +65,12 @@ node_templates:
         InstanceType: { get_input: instance_type }
         kwargs:
           BlockDeviceMappings:
-          - DeviceName: '/dev/sda1'
-            Ebs:
-              DeleteOnTermination: True
-          Placement:
-            AvailabilityZone: { get_capability: [ { get_input: network_deployment_name }, availability_zone ] }
-          UserData: { get_attribute: [ cloud_init, cloud_config ] }
+            - DeviceName: '/dev/sda1'
+              Ebs:
+                DeleteOnTermination: true
+            Placement:
+              AvailabilityZone: { get_capability: [ { get_input: network_deployment_name }, availability_zone ] }
+            UserData: { get_attribute: [ cloud_init, cloud_config ] }
       use_public_ip: true
     relationships:
       - type: cloudify.relationships.depends_on
@@ -181,12 +183,12 @@ node_templates:
       resource_config:
         kwargs:
           Filters:
-          - Name: owner-id
-            Values:
-            - "263721492972"
-          - Name: name
-            Values:
-            - "CentOS7-cloudify-examples-image"
+            - Name: owner-id
+              Values:
+                - "263721492972"
+              - Name: name
+                Values:
+                  - "CentOS7-cloudify-examples-image"
 
 groups:
 

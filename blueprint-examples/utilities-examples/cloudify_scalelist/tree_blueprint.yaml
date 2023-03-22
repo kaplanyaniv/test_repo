@@ -37,18 +37,21 @@ imports:
 inputs:
 
   tree_name:
+    display_label: Tree Name
     type: string
     description: >
        Tree name
     default: tree0
 
   branch_name:
+    display_label: Branch Name
     type: string
     description: >
        Branch name
     default: branch0
 
   leaf_name:
+    display_label: Leaf Name
     type: string
     description: >
        Leaf name
@@ -559,19 +562,19 @@ policies:
   tree_scaling_policy:
     type: cloudify.policies.scaling
     properties:
-      default_instances:  1
+      default_instances: 1
     targets: [tree_scale]
 
   branch_scaling_policy:
     type: cloudify.policies.scaling
     properties:
-      default_instances:  1
+      default_instances: 1
     targets: [branch_scale]
 
   leaf_scaling_policy:
     type: cloudify.policies.scaling
     properties:
-      default_instances:  0
+      default_instances: 0
     targets: [leaf_scale]
 
   # Failed to validate blueprint Nodes and groups cannot be members in multiple

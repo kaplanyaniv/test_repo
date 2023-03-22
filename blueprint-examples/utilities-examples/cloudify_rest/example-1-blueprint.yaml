@@ -26,7 +26,6 @@ inputs:
       REST API endpoint CA_BUNDLE
       Use /inputs/rest_endpoint_cert.yaml as input
 
-
 node_templates:
 
   user10-all-properties:

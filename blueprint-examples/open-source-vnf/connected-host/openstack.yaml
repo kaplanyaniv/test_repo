@@ -13,6 +13,7 @@ imports:
 inputs:
 
   image:
+    display_label: Image
     description: An OpenStack Image ID.
     type: string
 
@@ -24,6 +25,7 @@ inputs:
     default: agent_key_public
 
   region:
+    display_label: Region
     type: string
     default: ''
 

@@ -15,18 +15,22 @@ inputs:
     default: { get_secret: resource_suffix }
 
   openstack_network_deployment_name:
+    display_label: Openstack Network Deployment Name
     type: string
     default: VNFM-Networking-Prov-Openstack-networks
 
   flavor_id:
+    display_label: Flavor Id
     type: string
     default: 3
 
   image_id:
+    display_label: Image Id
     type: string
     default: 1d6340df-2f14-41e6-ab27-bbd35e818fdf
 
   vnf_vm_name:
+    display_label: Vnf Vm Name
     type: string
     default: webserver
 
@@ -113,10 +117,10 @@ node_templates:
             - "_webserver_mgmt_port"
             - { get_input: resource_suffix }
     relationships:
-    - type: cloudify.relationships.contained_in
-      target: mgmt_network
-    - type: cloudify.relationships.connected_to
-      target: network_security_group
+      - type: cloudify.relationships.contained_in
+        target: mgmt_network
+      - type: cloudify.relationships.connected_to
+        target: network_security_group
 
   lan_port:
     type: cloudify.nodes.openstack.Port
@@ -129,10 +133,10 @@ node_templates:
             - "_webserver_lan_port"
             - { get_input: resource_suffix }
     relationships:
-    - type: cloudify.relationships.contained_in
-      target: lan_network
-    - type: cloudify.relationships.connected_to
-      target: network_security_group
+      - type: cloudify.relationships.contained_in
+        target: lan_network
+      - type: cloudify.relationships.connected_to
+        target: network_security_group
 
   image:
     type: cloudify.nodes.openstack.Image
@@ -142,7 +146,7 @@ node_templates:
         container_format: "bare"
         disk_format: "qcow2"
       client_config: *client_config
-      use_external_resource: True
+      use_external_resource: true
 
   keypair:
     type: cloudify.keys.nodes.RSAKey
@@ -215,15 +219,14 @@ node_templates:
         flavor_id: { get_input: flavor_id }
         user_data: { get_attribute: [ cloud_config, cloud_config ] }
     relationships:
-    - type: cloudify.relationships.openstack.server_connected_to_port
-      target: mgmt_port
-    - type: cloudify.relationships.openstack.server_connected_to_port
-      target: lan_port
-    - type: cloudify.relationships.depends_on
-      target: image
-    - type: cloudify.relationships.depends_on
-      target: cloud_config
-
+      - type: cloudify.relationships.openstack.server_connected_to_port
+        target: mgmt_port
+      - type: cloudify.relationships.openstack.server_connected_to_port
+        target: lan_port
+      - type: cloudify.relationships.depends_on
+        target: image
+      - type: cloudify.relationships.depends_on
+        target: cloud_config
 
 capabilities:
   vm_public_ip:

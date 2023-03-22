@@ -3,10 +3,10 @@ tosca_definitions_version: cloudify_dsl_1_3
 imports:
   - plugin:cloudify-fabric-plugin
 
-
 inputs:
 
   kubernetes_helm_ansible_playbook_path:
+    display_label: Kubernetes Helm Ansible Playbook Path
     type: string
     default: ansible-helm/install.yml
 
@@ -95,9 +95,9 @@ node_templates:
       - type: cloudify.ansible.relationships.connected_to_host
         target: kube-master
         source_interfaces:
-           cloudify.interfaces.relationship_lifecycle:
+          cloudify.interfaces.relationship_lifecycle:
              preconfigure:
-              inputs:
+               inputs:
                 group_name: k8s-master
                 hostname: master
                 host_config:
@@ -106,7 +106,6 @@ node_templates:
                   ansible_ssh_private_key_file: { get_property: [ kube-master, agent_config, key ] }
                   ansible_become: true
                   ansible_ssh_common_args: { get_input: kubespray_ansible_ssh_common_args }
-
 
 outputs:
 

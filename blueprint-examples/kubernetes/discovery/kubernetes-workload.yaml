@@ -8,17 +8,18 @@ blueprint_labels:
 
   csys-obj-type:
     values:
-    - environment
+      - environment
 
 labels:
 
   csys-obj-type:
     values:
-     - environment
+      - environment
 
 inputs:
 
   deployment:
+    display_label: Deployment
     type: string
     default: eks
 
@@ -39,5 +40,5 @@ node_templates:
       file:
         resource_path: resources/pod.yaml
     relationships:
-    - type: cloudify.relationships.kubernetes.connected_to_shared_cluster
-      target: kubernetes_deployment
+      - type: cloudify.relationships.kubernetes.connected_to_shared_cluster
+        target: kubernetes_deployment

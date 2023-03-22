@@ -17,13 +17,12 @@ node_templates:
       port: { get_input: webserver_port }
     interfaces:
       cloudify.interfaces.lifecycle:
-        create: 
+        create:
           implementation: install.py
           executor: central_deployment_agent
-        delete: 
+        delete:
           implementation: uninstall.py
           executor: central_deployment_agent
-
 
 outputs:
 

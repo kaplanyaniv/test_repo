@@ -21,12 +21,14 @@ inputs:
     default: VNFM-webserver-Prov-Azure-vm
 
   lb_public_port:
+    display_label: Lb Public Port
     description: >
       Load balancer public network port on which service is exposed
     type: integer
     default: 8080
 
   wan_port:
+    display_label: Wan Port
     type: string
     description: >
       Port on which service is going to be exposed
@@ -102,7 +104,6 @@ node_templates:
     relationships:
       - type: cloudify.relationships.depends_on
         target: fg_port_forwarding
-
 
 outputs:
   web_server:

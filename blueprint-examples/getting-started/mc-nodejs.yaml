@@ -10,6 +10,7 @@ imports:
 
 inputs:
   infra_name:
+    display_label: Infra Name
     description: >
       Name of infrastructure blueprint to deploy.
     type: string
@@ -27,6 +28,7 @@ inputs:
           - vsphere
 
   infra_archive:
+    display_label: Infra Archive
     description: >
       URL of infra zip file.
     type: string
@@ -43,6 +45,7 @@ inputs:
     default: { concat: [ 'infra-', { get_input: infra_name } ] }
 
   env_name:
+    display_label: Env Name
     type: string
     description: Control parameters for names in resources.
     default: mcnodejsexample
@@ -120,11 +123,3 @@ outputs:
   admin_url:
     description: Administration console URL
     value: { concat: [ 'http://', { get_capability: [ { get_attribute: [ infrastructure, deployment, id ] }, endpoint ] }, ':8080' ] }
-
-
-
-
-
-
-
-

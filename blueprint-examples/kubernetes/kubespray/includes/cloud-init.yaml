@@ -21,7 +21,7 @@ node_templates:
             ssh-authorized-keys:
               - { get_attribute: [agent_key, public_key_export] }
         runcmd:
-        - "yum install python-netaddr"
+          - "yum install python-netaddr"
     relationships:
       - type: cloudify.relationships.depends_on
         target: agent_key

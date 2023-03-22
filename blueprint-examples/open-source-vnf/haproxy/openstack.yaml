@@ -26,6 +26,7 @@ inputs:
     description: Deployment name of the VNF network
 
   region:
+    display_label: Region
     type: string
     default: ''
 
@@ -49,8 +50,8 @@ node_templates:
       resource_config:
         id: { get_capability: [ openstack , public_network ] }
     relationships:
-    - type: cloudify.relationships.contained_in
-      target: openstack
+      - type: cloudify.relationships.contained_in
+        target: openstack
 
   mgmt_network:
     type: cloudify.nodes.openstack.Network
@@ -60,8 +61,8 @@ node_templates:
       resource_config:
         id: { get_capability: [ openstack , mgmt_network ] }
     relationships:
-    - type: cloudify.relationships.contained_in
-      target: openstack
+      - type: cloudify.relationships.contained_in
+        target: openstack
 
   ip:
     type: cloudify.nodes.openstack.FloatingIP
@@ -70,8 +71,8 @@ node_templates:
       resource_config:
         id: { get_capability: [ openstack , external_network ] }
     relationships:
-    - type: cloudify.relationships.contained_in
-      target: openstack
+      - type: cloudify.relationships.contained_in
+        target: openstack
 
   openstack:
     type: cloudify.nodes.Component

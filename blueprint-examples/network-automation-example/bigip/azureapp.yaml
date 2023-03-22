@@ -68,8 +68,8 @@ node_templates:
                   IP_INSIDE: { get_capability: [ {get_input: prov_deployment_name}, wan_ip ] }
                   IP_OUTSIDE: { get_capability: [ {get_input: prov_deployment_name}, public_ip ] }
     relationships:
-    - type: cloudify.relationships.depends_on
-      target: license
+      - type: cloudify.relationships.depends_on
+        target: license
 
 capabilities:
   bigip_ip:

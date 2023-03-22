@@ -7,39 +7,46 @@ imports:
 inputs:
 
   subscription-id-secret:
+    display_label: Subscription-Id-Secret
     type: string
     required: false
     default: azure_subscription_id
 
   tenant-id-secret:
+    display_label: Tenant-Id-Secret
     type: string
     required: false
     default: azure_tenant_id
 
   client-id-secret:
+    display_label: Client-Id-Secret
     type: string
     required: false
     default: azure_client_id
 
   client-secret-secret:
+    display_label: Client-Secret-Secret
     type: string
     required: false
     default: azure_client_secret
 
   resource_group_name:
+    display_label: Resource Group Name
     type: string
 
   managed_cluster_name:
+    display_label: Managed Cluster Name
     type: string
 
   env_name:
+    display_label: Env Name
     type: string
     default: { get_input: managed_cluster_name}
 
 dsl_definitions:
 
   azure_config: &azure_config
-    subscription_id:  { get_secret: { get_input: subscription-id-secret } }
+    subscription_id: { get_secret: { get_input: subscription-id-secret } }
     tenant_id: { get_secret: { get_input: tenant-id-secret } }
     client_id: { get_secret: { get_input: client-id-secret } }
     client_secret: { get_secret: { get_input: client-secret-secret } }
@@ -47,7 +54,7 @@ dsl_definitions:
 node_templates:
 
   managed_cluster:
-    type: cloudify.azure.nodes.compute.ManagedCluster
+    type: cloudify.nodes.azure.compute.ManagedCluster
     properties:
       use_external_resource: true
       resource_group: { get_input: resource_group_name }
