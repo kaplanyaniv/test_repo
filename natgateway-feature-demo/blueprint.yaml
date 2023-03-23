@@ -47,7 +47,7 @@ node_templates:
   elasticip:
     type: cloudify.nodes.aws.ec2.ElasticIP
     properties:
-     resource_config:
+      resource_config:
        kwargs:
          Domain: 'vpc'
      client_config: *client_config
