@@ -46,9 +46,9 @@ node_templates:
               POST_ID: "1"
         stop:
           inputs:
-              template_file: templates/delete-user-post-template.yaml
-              params:
-                  POST_ID: "1"
+            template_file: templates/delete-user-post-template.yaml
+            params:
+                POST_ID: "1"
     relationships:
       - type: cloudify.relationships.depends_on
         target: user-details
